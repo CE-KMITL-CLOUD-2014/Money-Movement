@@ -5,6 +5,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import connect_database.ManageConnection;
+
+
+/////// class create for change Name to Id or Id to Name  for use with connect database and sent data to client side 
+////// use singleton pattern because save cost to connect database
 public class ConvertNameId {
 	
 	public static volatile  ConvertNameId gen = null;
@@ -25,6 +30,8 @@ public class ConvertNameId {
 		return gen;
 	}
 	
+	
+	
 	private ConvertNameId()
 	{
 		this.data = new ArrayList<Pair<String, ArrayList<Pair<String, String>>>>();
@@ -32,8 +39,11 @@ public class ConvertNameId {
 	
 	public String idToName(String tableName,String id) throws Exception
 	{
+		
+		// check table have in class if do not have go to get from database  
 		if(!checkHaveTableInArrayList(tableName))
 		{
+			// synchronized because many thread may use in one time
 			synchronized (this) {
 				this.getIdNameToArrayList(tableName);
 			}
@@ -57,8 +67,11 @@ public class ConvertNameId {
 		}
 		return null;
 	}
+	
+	// check table have in class if do not have go to get from database
 	public String nameToId(String tableName,String name) throws Exception
 	{
+		// synchronized because many thread may use in one time
 		if(!checkHaveTableInArrayList(tableName))
 		{
 			synchronized (this) {
@@ -85,6 +98,31 @@ public class ConvertNameId {
 		return null;
 	}
 	
+	
+	// check table have in class if do not have go to get from database
+	public ArrayList< Pair<String,String>> getListFromTable(String tableName) throws Exception
+	{
+		// synchronized because many thread may use in one time
+		if(!checkHaveTableInArrayList(tableName))
+		{
+			synchronized (this) {
+				this.getIdNameToArrayList(tableName);
+			}
+		}
+		
+		for(int i=0;i<data.size();i++)
+		{
+			Pair<String, ArrayList<Pair<String, String>>> temPair = data.get(i);
+			if(temPair.getFirst().compareTo(tableName)==0)
+			{
+				return temPair.getSecound();
+			}
+		}
+		return null;
+	}
+	
+	
+	
 	public boolean checkHaveTableInArrayList(String tableName)
 	{
 		for(int i=0;i<data.size();i++)
@@ -102,7 +140,7 @@ public class ConvertNameId {
 	{
 		if(!checkHaveTableInArrayList(tableName))
 		{
-			Connection conection = ManangeConnection.getConnection();
+			Connection conection =  ManageConnection.getConnection(Math.round( Math.random()));
 			Statement statement = null;
 			ResultSet resultSet = null;
 			String sqlCommand = "select * from "+tableName;

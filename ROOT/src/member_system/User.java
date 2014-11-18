@@ -1,6 +1,10 @@
 package member_system;
 
-public class User {
+import org.json.simple.JSONObject;
+
+
+
+public class User  {
 	
 	private String username;
 	private String password;
@@ -23,7 +27,6 @@ public class User {
 		this.profile = null;
 	}
 	
-	
 	public String getUsername()
 	{
 		return this.username;
@@ -40,6 +43,13 @@ public class User {
 	{
 		return this.profile;
 	}
+	
+	public void setSessionId(String sessionId)
+	{
+		this.sessionID = sessionId;
+	}
+	
+	
 	
 	@Override
 	public String toString()
@@ -60,6 +70,21 @@ public class User {
 		allString = name+password+sessionId+profileString;
 		
 		return allString;
+	}
+
+	
+	public JSONObject toJSONObject() {
+		// TODO Auto-generated method stub
+		
+		JSONObject json = new JSONObject();
+		Profile profile = this.getProfile();
+		
+		json.put("username",this.getUsername());
+		json.put("password", "-----------------------");
+		json.put("sessionId",this.getSessionID());
+		json.put("profile", profile.toJSONObject());
+		
+		return json;
 	}
 
 }
