@@ -1,5 +1,5 @@
 .bd-bg{
-	background-color:#BDC3C7 ;
+	background-color:#EFF0EA ;
 }
 .displayprofile{
 	display: inline;
@@ -7,14 +7,26 @@
 .bg-aside{
 	padding: 5px;
     border: 5px;
-	min-height:180px;
-	background-color:#ECF0F1 ; // #eee
+	min-height:580px;
+	max-height:650px;	
+	border: rgb(209, 211, 213) solid 1px;
+	background-color:#F9F9F9 ; // #eee
 	
 }
+.bg-viewboard{
+	margin-top: 15px;
+	margin-bottom:10px;
+	padding-top: 45px;
+	padding-bottom: 45px;
+    border: rgb(209, 211, 213) solid 1px;
+	background-color: #F9F9F9; // #eee
+}
 .bg-content{
-	padding: 5px;
-    border: 5px;
-	background-color: #ffC0C0; // #eee
+	margin-top: 15px;
+	padding-top: 45px;
+	padding-bottom: 45px;
+    border: rgb(209, 211, 213) solid 1px;
+	background-color: #ffffff; // #eee
 }
 .groupline{
 	display: inline-flex;
@@ -51,7 +63,9 @@
     position: relative;
 	top:10px;
 	display:block;
-	//padding-bottom: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 94%;
 }
 .float-button{
     position: relative;
@@ -92,4 +106,28 @@
 	margin-left: auto;
 	margin-right: auto;
 	width: 66%;
+}
+.color-nav{
+	background-color: rgb(70, 113, 213);
+	border-color: rgb(108, 140, 213);
+}
+div a{
+	color: #FFFFFF;
+}
+li a
+{
+	color: #050505;
+}
+.color-text{
+	color:#7AAECA;
+}
+.scroller-div{
+	max-height:400px;
+	overflow:auto;
+}
+.text-space{
+	text-align:center;
+}
+.chart-style{
+	margin-top:55px;
 }
