@@ -17,15 +17,20 @@ public class CreateDistributeCon implements CreateConnection  {
 				Connection conn;
 				String conString;
 				
-				conString = "jdbc:sqlserver://yu80jv1m51.database.windows.net:1433;"
+				conString = "jdbc:sqlserver://vtul0lsitd.database.windows.net:1433;"
 						+ "database=db_moneymovement;"
-						+ "user=samander@yu80jv1m51;"
-						+ "password=Xzrw8Cjx;"
+						+ "user=passakornOD@vtul0lsitd;"
+						+ "password=54T1I9E7w;"
 						+ "encrypt=true;hostNameInCertificate=*.database.windows.net;"
 						+ "loginTimeout=30;";
 				conn = DriverManager.getConnection(conString);
 				return conn;
 			}
+			
+			
+			
+			
+			
 			catch(Exception ex)
 			{
 				ex.printStackTrace();
@@ -41,10 +46,10 @@ public class CreateDistributeCon implements CreateConnection  {
 				Connection conn;
 				String conString;
 				
-				conString = "jdbc:sqlserver://b0sn48wkw8.database.windows.net:1433;"
+				conString = "jdbc:sqlserver://p66lfv4crq.database.windows.net:1433;"
 						+ "database=db_moneymovement;"
-						+ "user=samander2@b0sn48wkw8;"
-						+ "password=Xzrw8Cjx;"
+						+ "user=passakornOD@p66lfv4crq;"
+						+ "password=54T1I9E7w;"
 						+ "encrypt=true;hostNameInCertificate=*.database.windows.net;"
 						+ "loginTimeout=30;";
 				conn = DriverManager.getConnection(conString);
