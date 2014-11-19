@@ -3,7 +3,7 @@
  * 
  * 
  * -----------------------------------------------------------------------------------*/
-moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
+moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter,$scope) {
 	/*-----------------------------------------------
 	 * variable of function return
 	 * 
@@ -86,10 +86,23 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 
 		},
 
-		requireDoghnutData : function(url){
+		requireDoghnutData : function(url,$scope){
+			this.clearData("formatDoghnutchart");
 			$http.post(url).success(function(data,status){
 				if(data){
+					
+					if(data.status=="error")	
+					{
+						alert("You do not have data");
+					}
+					
 					localStorage.setItem("doghnutgraph",JSON.stringify(data));
+					$scope.checkdata();
+					
+				}
+				else
+				{
+					this.clearData("formatDoghnutchart");
 				}
 			}).error(function(data,status){
 
@@ -105,17 +118,22 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 			var highlight = '';
 			var label = '';
 			var doghnut = this.getDoghnutGraph();
-			for(var i in doghnut.data.result){
-				for(var j in doghnutColor){
-					if(i==j){
-						//console.log(doghnut.data.result[i]);
-						value = doghnut.data.result[i].value;
-						color = doghnutColor[j].color;
-						highlight = '#FF5A5E';
-						label = doghnut.data.result[i].type;
-						formatData.format.push({'value':value,'color':color,'highlight':highlight,'label':label});
+			if(doghnut.data!=="null"&&doghnut.status!=="error"){
+				for(var i in doghnut.data.result){
+					for(var j in doghnutColor){
+						if(i==j){
+							//console.log(doghnut.data.result[i]);
+							value = doghnut.data.result[i].value;
+							color = doghnutColor[j].color;
+							highlight = '#FF5A5E';
+							label = doghnut.data.result[i].type;
+							formatData.format.push({'value':value,'color':color,'highlight':highlight,'label':label});
+						}
 					}
 				}
+			}
+			else{
+				//alert("no transaction");
 			}
 			localStorage.setItem("formatDoghnutchart",JSON.stringify(formatData.format));
 			formatDoghnutchart = JSON.parse(localStorage.getItem("formatDoghnutchart"));
@@ -131,10 +149,19 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 			compareDataBargraph = JSON.parse(localStorage.getItem("compareDataBargraph"));
 			return compareDataBargraph;
 		},
-		requireCompareBarData : function(url){
+		requireCompareBarData : function(url,$scope,statedata){
 			$http.post(url).success(function(data,status){
 				if(data){
+					
+					if(data.status=="error")
+					{
+						alert("You do not have data.");
+					}
+					
+					
 					localStorage.setItem("compareDataBargraph",JSON.stringify(data));
+					$scope.monthLabel = statedata.setFormatgraph()
+					$scope.callBarFormatGraph();
 					//console.log(compareDataBargraph);
 				}
 			}).error(function(data,status){
@@ -150,6 +177,8 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 			var useval = '';
 			var month = '';
 			var graph = this.getCompareBarGraph();
+			console.log(graph);
+			if(graph.status !== 'error'){
 			for(var i in graph.data.result){
 				//console.log(graph[i].month);
 				for(var j in monthData){
@@ -164,6 +193,10 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 					}
 				}
 			}
+			}else{
+				this.clearData("datagraph");
+				//alert("is not data");
+			}
 			localStorage.setItem("datagraph",JSON.stringify({'month':formatData.format,'valueref':tempvalue.value,'valueuse':temptotal.total}));
 			datagraph = JSON.parse(localStorage.getItem("datagraph"));
 			return datagraph;
@@ -177,10 +210,21 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 			analysisBarchart = JSON.parse(localStorage.getItem("analysisBarchart"));
 			return analysisBarchart;
 		},
-		requireCompareData : function(url){
+		requireCompareData : function(url,$scope,statedata){
 			$http.post(url).success(function(data,status){
 				if(data){
 					localStorage.setItem("analysisBarchart",JSON.stringify(data));
+					if(data.status=="error")
+					{
+						$scope.data = {};
+						alert("Do not have data.");
+						statedata.clearData("analysisBarchart");
+					}
+					else
+					{
+						$scope.datagraph = statedata.getanalysisBarchart();
+						$scope.callFormatGraph();
+					}
 				}
 			}).error(function(data,status){
 
@@ -201,19 +245,26 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 
 			})
 		},
-		setarraylabel : function(monthselect){
+		setarraylabel : function(monthselect,yearselect){
 			tempvalue.value = [];
 			var temp = $filter('orderBy')(transaction.data.incomeoutlay,'savedate');
 			for(var i in temp){
 				//console.log(temp[i].savedate);
-				var date = new Date(temp[i].savedate);
-				//console.log(date.getMonth()+' '+monthselect);
-				if(date.getMonth()== (monthselect-1)){
-					var item = temp[i].savedate;
-					var date = new Date(item);
-					var day = date.getDate();
-					tempvalue.value.push(day)
+
+				splitDate = temp[i].savedate.split("-");
+				var year = parseInt(splitDate[0])-1900;
+				var month = parseInt(splitDate[1])-1;
+				var day =  parseInt(splitDate[2]);
+				var date = new Date(year,month,day);
+
+				if(date.getMonth()== (monthselect-1)&&(year+1900)===yearselect){
+					//var item = temp[i].savedate;
+					//var date = new Date(year,month,day);
+					var wantday = parseInt(date.getDate());
+					tempvalue.value.push(wantday);
+					//console.log(date.getMonth()+' '+monthselect);
 				}
+				tempvalue.value.sort(function(a, b){return a-b});
 
 			}
 			localStorage.setItem("label",JSON.stringify(tempvalue.value));
@@ -222,11 +273,11 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 			return label;
 
 		},
-		  
+
 		///---------------------------------------------------------------////
 		/*define format line chart for Daily spend
 		///---------------------------------------------------------------///*/
-		setarraydata : function(monthselect){
+		setarraydata : function(monthselect,yearselect){
 			tempdata.data = [];
 			temptotal.total = [];
 			var totalincomeoutcome = 0;
@@ -234,9 +285,13 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 			var outcome = 0;
 			var temp = $filter('orderBy')(transaction.data.incomeoutlay,'savedate');
 			for(var i in temp){
-				var date = new Date(temp[i].savedate);
-				//console.log(date.getMonth());
-				if(date.getMonth()=== (monthselect-1)){
+				splitDate = temp[i].savedate.split("-");
+				var year = parseInt(splitDate[0])-1900;
+				var month = parseInt(splitDate[1])-1;
+				var day =  parseInt(splitDate[2]);
+				var date = new Date(year,month,day);
+				//console.log((year+1900)+" "+yearselect);
+				if(date.getMonth()=== (monthselect-1)&&(year+1900)===yearselect){
 					var item = temp[i].amount;
 					if(temp[i].typeofuse.type=="outcome"){
 						outcome += item;
@@ -248,9 +303,6 @@ moneyMovement.factory('statedata',['$http','$filter',function ($http,$filter) {
 					} 
 					totalincomeoutcome += item;
 					tempdata.data.push(totalincomeoutcome);
-					//console.log(item);
-
-					//console.log(item +' '+total);
 				}
 			}
 			temptotal.total.push({
